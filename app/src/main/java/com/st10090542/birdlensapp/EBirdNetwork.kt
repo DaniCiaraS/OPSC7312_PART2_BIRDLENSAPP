@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object EBirdNetwork {
-    private const val BASE_URL = "https://api.ebird.org/v2/ref/hotspot/geo?lat={{lat}}&lng={{lng}}"
+    private const val BASE_URL = "https://api.ebird.org/"
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -17,6 +17,7 @@ object EBirdNetwork {
         retrofit.create(EBirdService::class.java)
     }
 }
+
 
 
 

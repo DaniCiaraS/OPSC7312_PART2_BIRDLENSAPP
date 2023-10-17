@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -41,86 +42,97 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // Find the button and set a click listener
         val viewHotspotsButton = findViewById<Button>(R.id.viewHotspotsButton)
         viewHotspotsButton.setOnClickListener {
-            // Handle the button click to fetch nearby hotspots
-            fetchNearbyHotspots()
+            // Specify the desired latitude and longitude
+            val latitude = -33.9875
+            val longitude = 18.4327 // Replace with your desired longitude
+
+            // Call the function to fetch hotspots at the specific location
+            fetchHotspotsAtLocation(latitude, longitude)
         }
     }
+    private val specificCoordinates = LatLng(-33.9875, 18.4327)
 
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
-        // You can now work with the Google Map object.
 
-        // Ensure you have location permissions and display the user's current location
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (specificCoordinates != null) {
+            // Zoom to the specific coordinates
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(specificCoordinates, 15f)
+            googleMap?.animateCamera(cameraUpdate)
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            googleMap?.isMyLocationEnabled = true
+                googleMap?.isMyLocationEnabled = true
 
-            // Zoom to the user's current location
-            fusedLocationProviderClient?.lastLocation
-                ?.addOnSuccessListener { location ->
-                    if (location != null) {
-                        val userLocation = LatLng(location.latitude, location.longitude)
-                        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLocation, 15f)
-                        googleMap?.animateCamera(cameraUpdate)
+                fusedLocationProviderClient?.lastLocation
+                    ?.addOnSuccessListener { location ->
+                        if (location != null) {
+                            val userLocation = LatLng(location.latitude, location.longitude)
+                            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLocation, 15f)
+                            googleMap?.animateCamera(cameraUpdate)
+                        }
                     }
-                }
+            }
         }
     }
 
+    private fun fetchHotspotsAtLocation(latitude: Double, longitude: Double) {
+        val roundedLatitude = String.format("%.2f", latitude).toDouble()
+        val roundedLongitude = String.format("%.2f", longitude).toDouble()
+        val backDays = 15
+        val searchRadius = 50
+        val apiKey = "tf6bo17rhuh9"
 
-    private fun fetchNearbyHotspots() {
-        // Check if you have the user's location data
-        val locationTextView = findViewById<TextView>(R.id.locationTextView)
-        val locationText = locationTextView.text.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response: Response<List<Hotspot>> = EBirdNetwork.eBirdService.getNearbyHotspots(
+                    roundedLatitude,
+                    roundedLongitude,
+                    backDays,
+                    searchRadius,
+                    "json",
+                    apiKey
+                )
 
-        if (locationText.isNotEmpty()) {
-            // Parse the latitude and longitude from the text
-            val (latitude, longitude) = locationText.split("\n")
-                .map { it.substringAfter(":").trim().toDoubleOrNull() }
+                if (response.isSuccessful) {
+                    val hotspotList: List<Hotspot>? = response.body()
 
-            // Check if latitude and longitude are not null
-            if (latitude != null && longitude != null) {
-                val backDays = 7 // Example value
-                val searchRadius = 10 // Example value
-                val format = "json" // Example value
+                    if (hotspotList != null && hotspotList.isNotEmpty()) {
+                        runOnUiThread {
+                            googleMap?.clear()
 
-                // Now you have the latitude, longitude, and other parameters
-                // You can use these to make a network request to fetch nearby hotspots
-                // Call your `fetchNearbyHotspots` function and pass these parameters
-                // For simplicity, you can handle network requests directly here
-
-                val apiKey = "tf6bo17rhuh9" // Replace with your API key
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val hotspotResponse = EBirdNetwork.eBirdService.getNearbyHotspots(
-                            latitude,
-                            longitude,
-                            backDays,
-                            searchRadius,
-                            format,
-                            apiKey
-                        )
-
-                        if (hotspotResponse.isSuccessful) {
-                            val hotspots = hotspotResponse.body()?.hotspots
-                            // Process the list of hotspots
-                            runOnUiThread {
-                                // Display the hotspots on the map or in a list
-                                // You may need to update your UI here.
+                            hotspotList.forEach { hotspot ->
+                                val hotspotLocation = LatLng(hotspot.lat, hotspot.lng)
+                                val markerOptions = MarkerOptions()
+                                    .position(hotspotLocation)
+                                    .title(hotspot.locName)
+                                googleMap?.addMarker(markerOptions)
                             }
-                        } else {
-                            // Handle API errors
-                            // You may need to show an error message to the user.
                         }
-                    } catch (e: Exception) {
-                        // Handle exceptions, e.g., network errors
-                        // You may need to show an error message to the user.
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "No hotspots found in the area", Toast.LENGTH_SHORT).show()
+                        }
                     }
+                } else {
+                    runOnUiThread {
+                        val errorBody = response.errorBody()?.string()
+                        Log.e("Hotspots", "API Error: $errorBody")
+                        Toast.makeText(this@MainActivity, "API Error: $errorBody", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Log.e("Hotspots", "An error occurred: ${e.message}")
+                    Toast.makeText(this@MainActivity, "An error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
+
+
 
     private fun checkPermissionsAndRequestLocation() {
         val hasFineLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

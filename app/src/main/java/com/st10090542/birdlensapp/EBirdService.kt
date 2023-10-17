@@ -14,8 +14,11 @@ interface EBirdService {
         @Query("dist") searchRadius: Int,
         @Query("fmt") format: String,
         @Query("apiKey") apiKey: String
-    ): retrofit2.Response<HotspotResponse>
+    ): retrofit2.Response<List<Hotspot>> // Change the return type
 }
+
+
+
 
 
 

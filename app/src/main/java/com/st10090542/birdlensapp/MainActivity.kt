@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // Call the function to fetch hotspots at the specific location
             fetchHotspotsAtLocation(latitude, longitude, maxDistance, useMetricSystem)
         }
+        //seekbar
         val distanceSeekBar = findViewById<SeekBar>(R.id.distanceSeekBar)
         val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
         val customThumb = ContextCompat.getDrawable(this, R.drawable.custom_seekbar_thumb_background)
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun fetchHotspotsAtLocation(latitude: Double, longitude: Double, maxDistance: Double, useMetricSystem: Boolean) {
         val latitudeString = latitude.toString().replace(",",".")
         val longitudeString = longitude.toString().replace(",",".")
-        val backDays = 15
+        val backDays = 30
         val maxDistanceKm = String.format("%.2f", maxDistance)
         val searchRadius = 50
         val apiKey = "tf6bo17rhuh9"

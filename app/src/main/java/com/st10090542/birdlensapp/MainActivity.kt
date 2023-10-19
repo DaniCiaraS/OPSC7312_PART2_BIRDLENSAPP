@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var mapView: MapView? = null
     private var googleMap: GoogleMap? = null
+    private var selectedDistance: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // Call the function to fetch hotspots at the specific location
             fetchHotspotsAtLocation(latitude, longitude, maxDistance, useMetricSystem)
         }
+        val distanceSeekBar = findViewById<SeekBar>(R.id.distanceSeekBar)
+        val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
+        val customThumb = ContextCompat.getDrawable(this, R.drawable.custom_seekbar_thumb_background)
+        distanceSeekBar.thumb = customThumb
+
+        distanceSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                selectedDistance = progress
+                distanceTextView.text = "Distance: $selectedDistance km"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Not needed for this implementation
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // If you want to update the displayed hotspots immediately upon SeekBar change,
+                // you can call fetchHotspotsWithinDistance(selectedDistance) here.
+            }
+        })
+
     }
     private val specificCoordinates = LatLng(-33.9875, 18.4327)
 

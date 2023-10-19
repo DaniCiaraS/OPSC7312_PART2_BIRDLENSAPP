@@ -47,6 +47,26 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- SeekBar to select the preferred maximum distance -->
+    <SeekBar
+        android:id="@+id/distanceSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:layout_gravity="center_horizontal"
+        android:padding="16dp"
+        android:thumb="@drawable/custom_seekbar_thumb" />
+
+    <!-- TextView to display the selected distance -->
+    <TextView
+        android:id="@+id/distanceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distance: 0 km"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="16dp" />
+
     <!-- Button to trigger fetching nearby hotspots -->
     <Button
         android:id="@+id/viewHotspotsButton"
@@ -56,6 +76,5 @@
         android:text="@string/button_view_hotspots" />
 
 </LinearLayout>
-
 
 

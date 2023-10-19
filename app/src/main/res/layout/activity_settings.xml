@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <Switch
+        android:id="@+id/metricSwitch"
+        android:layout_width="176dp"
+        android:layout_height="52dp"
+        android:checked="true"
+        android:text="Use Metric System"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/maxDistanceEditText"
+        android:layout_width="419dp"
+        android:layout_height="74dp"
+        android:hint="Maximum Distance (in km)"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/metricSwitch" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/maxDistanceEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Save" />
+
+    <!-- RadioGroup for selecting metric or imperial units -->
+    <RadioGroup
+        android:id="@+id/unitSelectionGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/saveButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RadioButton
+            android:id="@+id/metricRadioButton"
+            android:layout_width="93dp"
+            android:layout_height="wrap_content"
+            android:text="Metric" />
+
+        <RadioButton
+            android:id="@+id/imperialRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Imperial" />
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>

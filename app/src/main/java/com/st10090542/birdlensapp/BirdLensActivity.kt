@@ -13,7 +13,7 @@ class BirdLensActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         Handler().postDelayed({
-            val intent = Intent(this@BirdLensActivity, MainActivity::class.java)
+            val intent = Intent(this@BirdLensActivity, SettingsActivity::class.java)
             startActivity(intent)
             finish()
         }, 3000)

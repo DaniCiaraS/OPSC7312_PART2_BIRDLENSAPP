@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var mapView: MapView? = null
     private var googleMap: GoogleMap? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,9 +45,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // Specify the desired latitude and longitude
             val latitude = -33.9875
             val longitude = 18.4327 // Replace with your desired longitude
+            val maxDistance = 10.0 // Replace with the desired max distance in kilometers
+            val useMetricSystem = true // Replace with your desired metric system preference
+
 
             // Call the function to fetch hotspots at the specific location
-            fetchHotspotsAtLocation(latitude, longitude)
+            fetchHotspotsAtLocation(latitude, longitude, maxDistance, useMetricSystem)
         }
     }
     private val specificCoordinates = LatLng(-33.9875, 18.4327)
@@ -76,18 +80,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun fetchHotspotsAtLocation(latitude: Double, longitude: Double) {
-        val roundedLatitude = String.format("%.2f", latitude).toDouble()
-        val roundedLongitude = String.format("%.2f", longitude).toDouble()
-        val backDays = 30
+    private fun fetchHotspotsAtLocation(latitude: Double, longitude: Double, maxDistance: Double, useMetricSystem: Boolean) {
+        val latitudeString = latitude.toString().replace(",",".")
+        val longitudeString = longitude.toString().replace(",",".")
+        val backDays = 15
+        val maxDistanceKm = String.format("%.2f", maxDistance)
         val searchRadius = 50
         val apiKey = "tf6bo17rhuh9"
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response: Response<List<Hotspot>> = EBirdNetwork.eBirdService.getNearbyHotspots(
-                    roundedLatitude,
-                    roundedLongitude,
+                    latitudeString,
+                    longitudeString,
                     backDays,
                     searchRadius,
                     "json",
@@ -132,6 +137,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
 
+    private fun convertDistance(distance:Double, toMetric: Boolean): Double {
+        return if (toMetric) {
+
+            distance * 1.60934
+        } else {
+            distance / 1.60934
+        }
+    }
 
     private fun checkPermissionsAndRequestLocation() {
         val hasFineLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -160,8 +173,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             // Now, you can use these latitude and longitude values to display the user's location on the UI.
                             // For example, set them in a TextView.
                             val locationTextView = findViewById<TextView>(R.id.locationTextView)
-                            locationTextView.text = "Latitude: -33.9875\nLongitude: 18.4327"
-
+                            locationTextView.text = "Latitude: $latitude\nLongitude: $longitude"
                         } else {
                             // Handle the case when location is null
                             Toast.makeText(this, "Location not available", Toast.LENGTH_SHORT).show()

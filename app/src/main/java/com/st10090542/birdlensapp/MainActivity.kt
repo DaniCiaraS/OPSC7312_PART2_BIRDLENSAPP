@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var mapView: MapView? = null
     private var googleMap: GoogleMap? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun fetchHotspotsAtLocation(latitude: Double, longitude: Double) {
         val roundedLatitude = String.format("%.2f", latitude).toDouble()
         val roundedLongitude = String.format("%.2f", longitude).toDouble()
-        val backDays = 15
+        val backDays = 30
         val searchRadius = 50
         val apiKey = "tf6bo17rhuh9"
 
@@ -161,7 +160,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             // Now, you can use these latitude and longitude values to display the user's location on the UI.
                             // For example, set them in a TextView.
                             val locationTextView = findViewById<TextView>(R.id.locationTextView)
-                            locationTextView.text = "Latitude: $latitude\nLongitude: $longitude"
+                            locationTextView.text = "Latitude: -33.9875\nLongitude: 18.4327"
+
                         } else {
                             // Handle the case when location is null
                             Toast.makeText(this, "Location not available", Toast.LENGTH_SHORT).show()
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         return object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                val location: Location = locationResult.lastLocation
+                val location: Location? = locationResult.lastLocation
                 Log.i("LocationResult", "onLocationResult: $location")
 
                 // Now that you have a new location, you can update your UI or perform other tasks as needed.

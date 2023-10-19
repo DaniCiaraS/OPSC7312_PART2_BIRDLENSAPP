@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "963225560124",
+    "project_id": "birdlensapp",
+    "storage_bucket": "birdlensapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963225560124:android:f4970894e56f799434cf39",
+        "android_client_info": {
+          "package_name": "com.st10090542.birdlensapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9VeJzz028fcIHxs2rffTcGvRTtCbZKS8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

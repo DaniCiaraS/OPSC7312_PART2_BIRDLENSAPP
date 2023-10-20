@@ -3,4 +3,13 @@
     <string name="location_display_text">Location will be displayed here</string>
     <string name="map_content_description">Map of Birding Hotspots</string>
     <string name="button_view_hotspots">View Nearby Birding Hotspots</string>
+    <string name="button_save_label">Save</string>
+    <string name="species_hint">Enter bird species</string>
+    <string name="notes_hint">Enter notes</string>
+    <string name="observation_species_label">Species: </string>
+    <string name="observation_notes_label">Notes: </string>
+    <string name="observation_location_label">Location: </string>
+    <string name="observation_date_label">Date: </string>
+    <string name="view_observations_button_text">View Observations</string>
+
 </resources>

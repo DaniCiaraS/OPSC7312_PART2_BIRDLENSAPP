@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
@@ -75,6 +76,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 // you can call fetchHotspotsWithinDistance(selectedDistance) here.
             }
         })
+        val birdObservationsButton = findViewById<Button>(R.id.birdObservationsButton)
+
+        birdObservationsButton.setOnClickListener {
+            loadFragment(BirdObservationsFragment())
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)  // Optional: Add fragments to the back stack for navigation
+            .commit()
 
     }
     private val specificCoordinates = LatLng(-33.9875, 18.4327)
